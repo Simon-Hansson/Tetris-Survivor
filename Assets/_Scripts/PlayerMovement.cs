@@ -1,18 +1,14 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerMovement : MonoBehaviour
 {
     //Input
     private Default Default;
-    private InputAction move;
 
     // Movement
     private Rigidbody rb;
     [SerializeField] private float movementForce = 1f;
-    [SerializeField] private float maxSpeed = 15f;
     [SerializeField] private float groundCheckRayLength = 2f;
     private Vector2 input = Vector2.zero;
     private Vector3 forceDirection = Vector3.zero;
@@ -26,17 +22,16 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Default = new Default();
         Default.Enable();
-        Default.Player.Movement.performed += movementPerformed;
-        Default.Player.Movement.canceled += movementCanceled;
-        move = Default.Player.Movement;
+        Default.Player.Movement.performed += MovementPerformed;
+        Default.Player.Movement.canceled += MovementCanceled;
     }
 
-    private void movementPerformed(InputAction.CallbackContext context)
+    private void MovementPerformed(InputAction.CallbackContext context)
     {
         isMoving = true;
         input = context.ReadValue<Vector2>();
     }
-    private void movementCanceled(InputAction.CallbackContext context)
+    private void MovementCanceled(InputAction.CallbackContext context)
     {
         isMoving = false;
     }
@@ -49,16 +44,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if(isMoving)
         {
-            forceDirection = new(input.x, 0, input.y);
-            Debug.Log(input);
+            forceDirection = new(-input.x, 0, -input.y);
         }
         else
         {
             forceDirection = Vector3.zero;
         }
         rb.AddForce(forceDirection * movementForce, ForceMode.Impulse);
-
-        //rb.linearDamping = 5f;
             
         if (Physics.gravity.y != -9.81f)
         {
